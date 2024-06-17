@@ -1,5 +1,5 @@
 package com.autobots.automanager.entidades;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 import org.springframework.hateoas.Link;
 
@@ -15,6 +15,11 @@ public class Telefone {
 	private String ddd;
 	@Column
 	private String numero;
+
+	@ManyToOne
+	@JoinColumn(name = "empresa_id")
+	private Empresa empresa;
+
 	@Transient
 	private ArrayList<Link> links;
 

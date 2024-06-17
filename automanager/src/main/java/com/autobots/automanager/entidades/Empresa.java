@@ -2,9 +2,11 @@ package com.autobots.automanager.entidades;
 
 import com.autobots.automanager.enumeracoes.PerfilUsuario;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.hateoas.RepresentationModel;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +14,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(exclude = {"usuarios", "mercadorias", "servicos", "vendas"})
 @Entity
-public class Empresa {
+public class Empresa extends RepresentationModel<Empresa> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

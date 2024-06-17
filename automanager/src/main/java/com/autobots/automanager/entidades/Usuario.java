@@ -1,58 +1,46 @@
 package com.autobots.automanager.entidades;
-
-import com.autobots.automanager.enumeracoes.PerfilUsuario;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.springframework.hateoas.server.core.Relation;
-
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+
+import com.autobots.automanager.enumeracoes.PerfilUsuario;
+
+import javax.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 @Data
-@EqualsAndHashCode(exclude = {"empresa", "veiculos"})
+@EqualsAndHashCode(exclude = { "mercadorias", "vendas", "veiculos" })
 @Entity
-@Relation(collectionRelation = "usuarios")
 public class Usuario {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	@Column(nullable = false)
 	private String nome;
-
 	@Column
 	private String nomeSocial;
-
 	@ElementCollection(fetch = FetchType.EAGER)
-	@Enumerated(EnumType.STRING)
 	private Set<PerfilUsuario> perfis = new HashSet<>();
-
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Telefone> telefones = new HashSet<>();
-
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	private Endereco endereco;
-
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Documento> documentos = new HashSet<>();
-
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Email> emails = new HashSet<>();
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "empresa_id")
-	@JsonBackReference
-	private Empresa empresa;
-
-	@OneToMany(mappedBy = "proprietario", fetch = FetchType.LAZY)
-	@JsonManagedReference
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<Credencial> credenciais = new HashSet<>();
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	private Set<Mercadoria> mercadorias = new HashSet<>();
+	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+	private Set<Venda> vendas = new HashSet<>();
+	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
 	private Set<Veiculo> veiculos = new HashSet<>();
-
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	private Set<CredencialUsuarioSenha> credenciais = new HashSet<>();
+	@OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+	private CredencialUsuarioSenha credencial;
+	@ManyToOne
+	@JoinColumn(name = "empresa_id")
+	private Empresa empresa;
 }
-

@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Data
-public class UsuarioDTO extends RepresentationModel<UsuarioDTO> {
+public class UsuarioDTO extends RepresentationModel<UsuarioDTO>{
     private Long id;
     private String nome;
     private String nomeSocial;

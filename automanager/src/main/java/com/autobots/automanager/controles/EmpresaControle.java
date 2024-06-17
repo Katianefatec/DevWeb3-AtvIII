@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,14 +52,14 @@ public class EmpresaControle {
         if (empresas.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            List<EntityModel<Empresa>> empresasComLinks = new ArrayList<>();
-            for (Empresa empresa : empresas) {
-                adicionadorLinkEmpresa.adicionarLink(empresa);
-                empresasComLinks.add(EntityModel.of(empresa));
-            }
+            List<EntityModel<Empresa>> empresasComLinks = empresas.stream()
+                    .map(EntityModel::of) // Cria EntityModel para cada empresa
+                    .collect(Collectors.toList());
+            adicionarLinks(empresasComLinks); // Chama o método correto
             return ResponseEntity.ok(CollectionModel.of(empresasComLinks));
         }
     }
+
 
     @PostMapping
     public ResponseEntity<?> cadastrarEmpresa(@RequestBody Empresa empresa) {
@@ -163,6 +164,16 @@ public class EmpresaControle {
                 vendasComLinks.add(EntityModel.of(venda));
             }
             return ResponseEntity.ok(CollectionModel.of(vendasComLinks));
+        }
+    }
+
+    private void adicionarLinks(List<EntityModel<Empresa>> empresas) {
+        for (EntityModel<Empresa> empresa : empresas) {
+            long id = empresa.getContent().getId();
+            Link selfLink = WebMvcLinkBuilder.linkTo(EmpresaControle.class)
+                    .slash(id)
+                    .withSelfRel();
+            empresa.add(selfLink);
         }
     }
 }

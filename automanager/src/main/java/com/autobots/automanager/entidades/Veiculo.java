@@ -3,7 +3,7 @@ package com.autobots.automanager.entidades;
 import com.autobots.automanager.enumeracoes.TipoVeiculo;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.server.core.Relation;

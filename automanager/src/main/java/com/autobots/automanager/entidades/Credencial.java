@@ -2,7 +2,7 @@ package com.autobots.automanager.entidades;
 
 import java.util.Date;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
 package com.autobots.automanager.entidades;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,6 +13,7 @@ public class CredencialUsuarioSenha extends Credencial {
 	@Column(nullable = false)
 	private String senha;
 
-	@OneToOne(mappedBy = "credencial")
+	@OneToOne
+	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
 }
