@@ -40,7 +40,7 @@ public class Usuario {
 	private Set<Veiculo> veiculos = new HashSet<>();
 	@OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
 	private CredencialUsuarioSenha credencial;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "empresa_id")
 	private Empresa empresa;
 }

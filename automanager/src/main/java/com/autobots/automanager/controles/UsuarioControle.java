@@ -31,6 +31,7 @@ public class UsuarioControle {
     private UsuarioRepositorio repositorio;
     private ModelMapper modelMapper;
     private AdicionadorLinkUsuario adicionadorLink;
+    private UsuarioRepositorio UsuarioRepositorio;
 
     @GetMapping("/usuario/{id}")
     public ResponseEntity<EntityModel<UsuarioDTO>> obterUsuario(@PathVariable long id) {
@@ -60,7 +61,7 @@ public class UsuarioControle {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/atualizar")
+    @PutMapping("/atualizar/{id}")
     public ResponseEntity<?> atualizarUsuario(@RequestBody Usuario usuario) {
         HttpStatus status = HttpStatus.CONFLICT;
         if (usuario.getId() != null) {
@@ -70,17 +71,16 @@ public class UsuarioControle {
         return new ResponseEntity<>(status);
     }
 
-    @DeleteMapping("/excluir")
-    public ResponseEntity<?> excluirUsuario(@RequestBody Usuario usuario) {
-        if (usuario.getId() != null) {
-            repositorio.delete(usuario);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    @DeleteMapping("/excluir/{id}")
+    public ResponseEntity<?> excluirUsuario(@PathVariable Long id) {
+        if (!UsuarioRepositorio.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
+        UsuarioRepositorio.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
-    // ... outros métodos do controlador ...
+
 
     @GetMapping("/{id}/veiculos")
     public ResponseEntity<CollectionModel<EntityModel<VeiculoDTO>>> obterVeiculosDoUsuario(@PathVariable Long id) {

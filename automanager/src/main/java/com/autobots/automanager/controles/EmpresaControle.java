@@ -4,7 +4,9 @@ import com.autobots.automanager.dtos.EmpresaDTO;
 import com.autobots.automanager.dtos.UsuarioDTO;
 import com.autobots.automanager.entidades.*;
 import com.autobots.automanager.modelos.AdicionadorLinkEmpresa;
+import com.autobots.automanager.modelos.EmpresaAtualizador;
 import com.autobots.automanager.repositorios.EmpresaRepositorio;
+import com.autobots.automanager.repositorios.UsuarioRepositorio;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ public class EmpresaControle {
 
     private final EmpresaRepositorio empresaRepositorio;
     private final AdicionadorLinkEmpresa adicionadorLinkEmpresa;
+    private UsuarioRepositorio usuarioRepositorio;
 
 
     @GetMapping("/empresa/{id}")
@@ -71,15 +74,19 @@ public class EmpresaControle {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("atualizar/{id}")
-    public ResponseEntity<?> atualizarEmpresa(@PathVariable Long id, @RequestBody Empresa empresa) {
-        return empresaRepositorio.findById(id)
-                .map(empresaExistente -> {
-                    empresa.setId(id);
-                    empresaRepositorio.save(empresa);
-                    return new ResponseEntity<>(HttpStatus.OK);
-                })
-                .orElse(ResponseEntity.notFound().build());
+    @PutMapping("/atualizar/{id}")
+    public ResponseEntity<?> atualizarEmpresa(@PathVariable Long id, @RequestBody Empresa atualizacao) {
+        HttpStatus status = HttpStatus.CONFLICT;
+        Empresa empresa = empresaRepositorio.getById(id);
+        if (empresa != null) {
+            EmpresaAtualizador atualizador = new EmpresaAtualizador();
+            atualizador.atualizar(empresa, atualizacao);
+            empresaRepositorio.save(empresa);
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<>(status);
     }
 
     @DeleteMapping("excluir/{id}")
@@ -167,6 +174,26 @@ public class EmpresaControle {
             return ResponseEntity.ok(CollectionModel.of(vendasComLinks));
         }
     }
+
+    @PostMapping("/associar-usuario/{idEmpresa}/{idUsuario}")
+    public ResponseEntity<?> associarUsuarioEmpresa(@PathVariable Long idEmpresa, @PathVariable Long idUsuario, @RequestBody Boolean associar) {
+        if (associar == null) {
+            return ResponseEntity.badRequest().body("Valor de associar é obrigatório");
+        }
+
+        Empresa empresa = empresaRepositorio.findById(idEmpresa)
+                .orElseThrow(() -> new NoSuchElementException("Empresa não encontrada com id: " + idEmpresa));
+
+        Usuario usuario = usuarioRepositorio.findById(idUsuario)
+                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado com id: " + idUsuario));
+
+        usuario.setEmpresa(empresa); // Associa o usuário à empresa
+
+        usuarioRepositorio.save(usuario); // Salva as alterações no banco de dados
+
+        return ResponseEntity.ok().body("Usuário associado à empresa com sucesso!");
+    }
+
 
     private void adicionarLinks(List<EntityModel<Empresa>> empresas) {
         for (EntityModel<Empresa> empresa : empresas) {
