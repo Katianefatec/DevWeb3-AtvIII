@@ -1,10 +1,13 @@
 package com.autobots.automanager.controles;
 
 import com.autobots.automanager.entidades.Telefone;
+import com.autobots.automanager.modelos.AdicionadorLinkTelefone;
 import com.autobots.automanager.modelos.TelefoneAtualizador;
 import com.autobots.automanager.modelos.TelefoneSelecionador;
 import com.autobots.automanager.repositorios.TelefoneRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,41 +21,74 @@ public class TelefoneControle {
     private TelefoneRepositorio repositorio;
     @Autowired
     private TelefoneSelecionador selecionador;
+    @Autowired
+    private AdicionadorLinkTelefone adicionadorLink;
+
 
     @GetMapping("/telefone/{id}")
-    public Telefone obterTelefone(@PathVariable long id) {
+    public ResponseEntity<Telefone> obterTelefone(@PathVariable long id) {
         List<Telefone> telefones = repositorio.findAll();
-        return selecionador.selecionar(telefones.toArray(new Telefone[0]), id);
+        Telefone[] telefonesArray = telefones.toArray(new Telefone[0]);
+        Telefone telefone = selecionador.selecionar(telefonesArray, id);
+        if (telefone == null) {
+            ResponseEntity<Telefone> resposta = new ResponseEntity<>(telefone, HttpStatus.NOT_FOUND);
+            return resposta;
+        } else {
+            adicionadorLink.adicionarLink(telefone);
+            ResponseEntity<Telefone> resposta = new ResponseEntity<>(telefone, HttpStatus.FOUND);
+            return resposta;
+        }
     }
 
     @GetMapping("/telefones")
-    public List<Telefone> obterTelefones() {
+    public ResponseEntity <List<Telefone>> obterTelefones() {
         List<Telefone> telefones = repositorio.findAll();
-        return telefones;
+        if (telefones.isEmpty()) {
+            ResponseEntity<List<Telefone>> resposta = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return resposta;
+        } else {
+            adicionadorLink.adicionarLink(telefones);
+            ResponseEntity<List<Telefone>> resposta = new ResponseEntity<>(telefones, HttpStatus.FOUND);
+            return resposta;
+        }
     }
 
     @PostMapping("/cadastro")
-    public void cadastrarTelefone(@RequestBody Telefone telefone) {
-        repositorio.save(telefone);
+    public ResponseEntity<?> cadastrarTelefone(@RequestBody Telefone telefone){
+        HttpStatus status = HttpStatus.CONFLICT;
+        if (telefone.getId() == null) {
+            repositorio.save(telefone);
+            status = HttpStatus.CREATED;
+        }
+        ResponseEntity<?> resposta = new ResponseEntity<>(status);
+        return resposta;
     }
 
+
     @PutMapping("/atualizar/{id}")
-    public void atualizarTelefone(@PathVariable Long id, @RequestBody Telefone atualizacao) {
+    public ResponseEntity<?> atualizarTelefone(@PathVariable Long id, @RequestBody Telefone atualizacao) {
+        HttpStatus status = HttpStatus.CONFLICT;
         List<Telefone> telefones = repositorio.findAll();
-        Telefone telefone = selecionador.selecionar(telefones.toArray(new Telefone[0]), id);
-        TelefoneAtualizador atualizador = new TelefoneAtualizador();
+        Telefone[] telefonesArray = telefones.toArray(new Telefone[0]);
+        Telefone telefone = selecionador.selecionar(telefonesArray, id);
         if (telefone != null) {
+            TelefoneAtualizador atualizador = new TelefoneAtualizador();
             atualizador.atualizar(telefone, atualizacao);
             repositorio.save(telefone);
+            status = HttpStatus.ACCEPTED;
         }
+        return new ResponseEntity<>(status);
     }
 
     @DeleteMapping("/excluir/{id}")
-    public void excluirTelefone(@PathVariable Long id) {
+    public ResponseEntity<?> excluirTelefone(@PathVariable Long id) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         Optional<Telefone> telefone = repositorio.findById(id);
         if (telefone.isPresent()) {
             repositorio.delete(telefone.get());
+            status = HttpStatus.OK;
         }
+        return new ResponseEntity<>(status);
     }
 
 }

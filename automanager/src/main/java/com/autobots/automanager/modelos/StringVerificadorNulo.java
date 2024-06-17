@@ -1,14 +1,14 @@
 package com.autobots.automanager.modelos;
 
-public class StringVerificadorNulo {
+import com.autobots.automanager.enumeracoes.TipoDocumento;
 
-	public boolean verificar(String dado) {
-		boolean nulo = true;
-		if (!(dado == null)) {
-			if (!dado.isBlank()) {
-				nulo = false;
-			}
-		}
-		return nulo;
+// Arquivo: StringVerificadorNulo.java
+public class StringVerificadorNulo {
+	public boolean verificar(String valor) {
+		return valor == null || valor.isEmpty();
+	}
+
+	public boolean verificar(TipoDocumento tipoDocumento) {
+		return tipoDocumento == null;
 	}
 }

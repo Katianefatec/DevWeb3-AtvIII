@@ -8,24 +8,26 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.autobots.automanager.enumeracoes.TipoDocumento;
-
 import lombok.Data;
-import org.springframework.hateoas.Link;
 
 @Data
 @Entity
-public class Documento {
+public class Mercadoria {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Column(nullable = false)
-	private TipoDocumento tipo;
+	private Date validade;
 	@Column(nullable = false)
-	private Date dataEmissao;
-	@Column(unique = true, nullable = false)
-	private String numero;
-	public void addLink(Link link) {
-		this.addLink(link);
-	}
+	private Date fabricao;
+	@Column(nullable = false)
+	private Date cadastro;
+	@Column(nullable = false)
+	private String nome;
+	@Column(nullable = false)
+	private long quantidade;
+	@Column(nullable = false)
+	private double valor;
+	@Column()
+	private String descricao;
 }

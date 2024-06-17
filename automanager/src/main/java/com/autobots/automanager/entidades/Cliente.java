@@ -40,6 +40,15 @@ public class Cliente extends RepresentationModel<Cliente>{
 	private Endereco endereco;
 	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Telefone> telefones = new ArrayList<>();
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Email> emails = new ArrayList<>();
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Mercadoria> mercadorias = new ArrayList<>();
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Servico> servicos = new ArrayList<>();
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
+
+
 
 	public void addLink(Link link) {
 		this.addLink(link);
