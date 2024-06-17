@@ -28,6 +28,7 @@ import org.modelmapper.ModelMapper;
 import javax.transaction.Transactional;
 
 
+
 @SpringBootApplication
 public class AutomanagerApplication implements CommandLineRunner {
 
@@ -124,12 +125,11 @@ public class AutomanagerApplication implements CommandLineRunner {
 
 		fornecedor.getEmails().add(emailFornecedor);
 
-		CredencialUsuarioSenha credencialFornecedor = new CredencialUsuarioSenha();
-		credencialFornecedor.setInativo(false);
-		credencialFornecedor.setNomeUsuario("dompedrofornecedor");
-		credencialFornecedor.setSenha("123456");
-		credencialFornecedor.setCriacao(new Date());
-		credencialFornecedor.setUltimoAcesso(new Date());
+		credencialFuncionario.setInativo(false);
+		credencialFuncionario.setNomeUsuario("dompedrofornecedor");
+		credencialFuncionario.setSenha("123456");
+		credencialFuncionario.setCriacao(new Date());
+		credencialFuncionario.setUltimoAcesso(new Date());
 
 		fornecedor.getCredenciais().add(credencialFornecedor);
 

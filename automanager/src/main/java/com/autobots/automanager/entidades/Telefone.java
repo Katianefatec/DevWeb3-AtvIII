@@ -1,7 +1,5 @@
 package com.autobots.automanager.entidades;
-
-import javax.persistence.*;
-
+import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.hateoas.Link;
 

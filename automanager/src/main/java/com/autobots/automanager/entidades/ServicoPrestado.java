@@ -1,10 +1,10 @@
 package com.autobots.automanager.entidades;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +12,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(exclude = {"servicos"})
 @Entity
+
 public class ServicoPrestado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
