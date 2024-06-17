@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import com.autobots.automanager.enumeracoes.PerfilUsuario;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -39,5 +40,10 @@ public class Usuario {
 	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
 	private Set<Venda> vendas = new HashSet<>();
 	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+	@JsonManagedReference
 	private Set<Veiculo> veiculos = new HashSet<>();
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JsonManagedReference
+	@JoinColumn(name = "empresa_id") // Nome da coluna que armazena o ID da empresa
+	private Empresa empresa;
 }

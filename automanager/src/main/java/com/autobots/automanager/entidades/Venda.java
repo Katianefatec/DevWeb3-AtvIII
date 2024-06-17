@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -25,6 +27,7 @@ public class Venda {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
 	private Usuario funcionario;
 	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+	@JsonBackReference
 	@JoinTable(
 			name = "venda_mercadoria",
 			joinColumns = @JoinColumn(name = "venda_id"),
@@ -38,6 +41,11 @@ public class Venda {
 			inverseJoinColumns = @JoinColumn(name = "servico_id")
 	)
 	private Set<Servico> servicos = new HashSet<>();
+	@JsonBackReference
 	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
 	private Veiculo veiculo;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "empresa_id")
+	@JsonBackReference
+	private Empresa empresa;
 }

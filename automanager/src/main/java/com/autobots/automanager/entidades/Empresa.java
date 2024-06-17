@@ -14,11 +14,14 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import org.springframework.hateoas.RepresentationModel;
 
 @Data
 @Entity
-public class Empresa {
+public class Empresa extends RepresentationModel<Empresa> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -38,11 +41,15 @@ public class Empresa {
 	@Column(nullable = false)
 	private Date cadastro;
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private Set<Usuario> usuarios = new HashSet<>();
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private Set<Mercadoria> mercadorias = new HashSet<>();
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private Set<Servico> servicos = new HashSet<>();
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private Set<Venda> vendas = new HashSet<>();
 }
