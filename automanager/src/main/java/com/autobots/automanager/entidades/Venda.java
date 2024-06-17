@@ -22,11 +22,20 @@ public class Venda {
 	private Date cadastro;
 	@Column(nullable = false, unique = true)
 	private String identificacao;
-	@ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonBackReference
 	private Usuario cliente;
-	@ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonBackReference
 	private Usuario funcionario;
-	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "veiculo_id")
+	@JsonBackReference
+	private Veiculo veiculo;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
 	@JsonBackReference
 	@JoinTable(
 			name = "venda_mercadoria",
@@ -34,17 +43,14 @@ public class Venda {
 			inverseJoinColumns = @JoinColumn(name = "mercadoria_id")
 	)
 	private Set<Mercadoria> mercadorias = new HashSet<>();
-	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
 	@JoinTable(
 			name = "venda_servico",
 			joinColumns = @JoinColumn(name = "venda_id"),
 			inverseJoinColumns = @JoinColumn(name = "servico_id")
 	)
 	private Set<Servico> servicos = new HashSet<>();
-	@JsonBackReference
-	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
-	private Veiculo veiculo;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "empresa_id")
 	@JsonBackReference
 	private Empresa empresa;

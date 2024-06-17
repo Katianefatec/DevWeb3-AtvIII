@@ -1,12 +1,17 @@
 package com.autobots.automanager.controles;
 
+import com.autobots.automanager.dtos.EmpresaDTO;
+import com.autobots.automanager.dtos.UsuarioDTO;
 import com.autobots.automanager.entidades.*;
 import com.autobots.automanager.modelos.AdicionadorLinkEmpresa;
 import com.autobots.automanager.repositorios.EmpresaRepositorio;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -15,24 +20,30 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/empresa")
 public class EmpresaControle {
+    @Autowired
+    private ModelMapper modelMapper;
 
     private final EmpresaRepositorio empresaRepositorio;
     private final AdicionadorLinkEmpresa adicionadorLinkEmpresa;
 
+
     @GetMapping("/empresa/{id}")
-    public ResponseEntity<EntityModel<Empresa>> obterEmpresa(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<EmpresaDTO>> obterEmpresa(@PathVariable Long id) {
         return empresaRepositorio.findById(id)
                 .map(empresa -> {
-                    adicionadorLinkEmpresa.adicionarLink(empresa);
-                    return ResponseEntity.ok(EntityModel.of(empresa));
+                    EmpresaDTO empresaDTO = modelMapper.map(empresa, EmpresaDTO.class);
+                    adicionadorLinkEmpresa.adicionarLink(empresaDTO);
+                    return ResponseEntity.ok(EntityModel.of(empresaDTO));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     @GetMapping("/empresas")
     public ResponseEntity<CollectionModel<EntityModel<Empresa>>> obterEmpresas() {
@@ -80,21 +91,27 @@ public class EmpresaControle {
 
 
     @GetMapping("/usuarios/{id}")
-    public ResponseEntity<CollectionModel<EntityModel<Usuario>>> obterUsuariosDaEmpresa(@PathVariable Long id) {
-        Empresa empresa = empresaRepositorio.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Empresa não encontrada com id " + id));
+    public ResponseEntity<CollectionModel<EntityModel<UsuarioDTO>>> obterUsuariosDaEmpresa(@PathVariable Long id) {
+        return empresaRepositorio.findById(id)
+                .map(empresa -> {
+                    List<UsuarioDTO> usuariosDTO = empresa.getUsuarios().stream()
+                            .map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
+                            .collect(Collectors.toList());
 
-        List<Usuario> usuarios = new ArrayList<>(empresa.getUsuarios());
-        if (usuarios.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            List<EntityModel<Usuario>> usuariosComLinks = new ArrayList<>();
-            for (Usuario usuario : usuarios) {
-                usuariosComLinks.add(EntityModel.of(usuario));
-            }
-            return ResponseEntity.ok(CollectionModel.of(usuariosComLinks));
-        }
+                    List<EntityModel<UsuarioDTO>> usuariosComLinks = usuariosDTO.stream()
+                            .map(usuarioDTO -> EntityModel.of(usuarioDTO)
+                                    .add(WebMvcLinkBuilder.linkTo(
+                                            WebMvcLinkBuilder.methodOn(UsuarioControle.class)
+                                                    .obterUsuario(usuarioDTO.getId())
+                                    ).withSelfRel())
+                            )
+                            .collect(Collectors.toList());
+
+                    return ResponseEntity.ok(CollectionModel.of(usuariosComLinks));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
+
 
 
     @GetMapping("/mercadorias/{id}")

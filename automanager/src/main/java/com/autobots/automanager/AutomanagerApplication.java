@@ -22,6 +22,11 @@ import com.autobots.automanager.enumeracoes.PerfilUsuario;
 import com.autobots.automanager.enumeracoes.TipoDocumento;
 import com.autobots.automanager.enumeracoes.TipoVeiculo;
 import com.autobots.automanager.repositorios.EmpresaRepositorio;
+import org.springframework.context.annotation.Bean;
+import org.modelmapper.ModelMapper;
+
+import javax.transaction.Transactional;
+
 
 @SpringBootApplication
 public class AutomanagerApplication implements CommandLineRunner {
@@ -29,10 +34,17 @@ public class AutomanagerApplication implements CommandLineRunner {
 	@Autowired
 	private EmpresaRepositorio repositorioEmpresa;
 
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
+	}
+
+
 	public static void main(String[] args) {
 		SpringApplication.run(AutomanagerApplication.class, args);
 	}
 
+	@Transactional
 	@Override
 	public void run(String... args) throws Exception {
 
@@ -195,6 +207,7 @@ public class AutomanagerApplication implements CommandLineRunner {
 		veiculo.setTipo(TipoVeiculo.SUV);
 		veiculo.setProprietario(cliente);
 
+
 		cliente.getVeiculos().add(veiculo);
 
 		empresa.getUsuarios().add(cliente);
@@ -212,6 +225,11 @@ public class AutomanagerApplication implements CommandLineRunner {
 		empresa.getServicos().add(trocaRodas);
 		empresa.getServicos().add(alinhamento);
 
+		cliente.getVeiculos().add(veiculo);
+
+		empresa.getUsuarios().add(cliente);
+
+		repositorioEmpresa.save(empresa);
 		Venda venda = new Venda();
 		venda.setCadastro(new Date());
 		venda.setCliente(cliente);
@@ -226,6 +244,7 @@ public class AutomanagerApplication implements CommandLineRunner {
 		empresa.getVendas().add(venda);
 
 		repositorioEmpresa.save(empresa);
+		veiculo.getVendas().add(venda);
 
 		Mercadoria rodaLigaLeve2 = new Mercadoria();
 		rodaLigaLeve2.setCadastro(new Date());
@@ -246,6 +265,8 @@ public class AutomanagerApplication implements CommandLineRunner {
 		balanceamento.setNome("balanceamento de rodas");
 		balanceamento.setValor(30);
 
+		empresa.getServicos().add(balanceamento);
+
 		Venda venda2 = new Venda();
 		venda2.setCadastro(new Date());
 		venda2.setCliente(cliente);
@@ -255,7 +276,6 @@ public class AutomanagerApplication implements CommandLineRunner {
 		venda2.getServicos().add(balanceamento);
 		venda2.getServicos().add(alinhamento2);
 		venda2.setVeiculo(veiculo);
-		veiculo.getVendas().add(venda2);
 
 		empresa.getVendas().add(venda2);
 

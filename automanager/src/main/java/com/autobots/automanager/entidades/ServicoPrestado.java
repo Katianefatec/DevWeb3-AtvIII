@@ -26,14 +26,14 @@ public class ServicoPrestado {
     @Column
     private String descricao;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "servico_prestado_servico",
             joinColumns = @JoinColumn(name = "servico_prestado_id"),
             inverseJoinColumns = @JoinColumn(name = "servico_id")
     )
     private Set<Servico> servicos = new HashSet<>();
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id")
     @JsonBackReference
     private Empresa empresa;

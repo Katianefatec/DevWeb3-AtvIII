@@ -26,10 +26,12 @@ public class Veiculo {
 	private String modelo;
 	@Column(nullable = false)
 	private String placa;
-	@ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "usuario_id")
 	@JsonBackReference
 	private Usuario proprietario;
-	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+
+	@OneToMany(mappedBy = "veiculo", fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private Set<Venda> vendas = new HashSet<>();
 }

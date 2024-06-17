@@ -1,9 +1,9 @@
 package com.autobots.automanager.modelos;
 
 import com.autobots.automanager.controles.EmpresaControle;
+import com.autobots.automanager.dtos.EmpresaDTO;
 import com.autobots.automanager.entidades.Empresa;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class AdicionadorLinkEmpresa implements AdicionadorLink<Empresa>{
+public class AdicionadorLinkEmpresa implements AdicionadorLink<Empresa> {
 
     public void adicionarLink(Empresa empresa) {
         Link selfLink = linkTo(methodOn(EmpresaControle.class).obterEmpresa(empresa.getId())).withSelfRel();
@@ -37,4 +37,13 @@ public class AdicionadorLinkEmpresa implements AdicionadorLink<Empresa>{
             adicionarLink(empresa);
         }
     }
+
+    public void adicionarLink(EmpresaDTO empresaDTO) {
+        Link selfLink = linkTo(methodOn(EmpresaControle.class).obterEmpresa(empresaDTO.getId())).withSelfRel();
+        empresaDTO.add(selfLink);
+    }
 }
+
+
+
+
