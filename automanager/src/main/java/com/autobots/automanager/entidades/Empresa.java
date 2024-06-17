@@ -3,6 +3,8 @@ package com.autobots.automanager.entidades;
 import com.autobots.automanager.enumeracoes.PerfilUsuario;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.RepresentationModel;
@@ -22,7 +24,8 @@ public class Empresa extends RepresentationModel<Empresa> {
 	@Column(nullable = false)
 	private String razaoSocial;
 
-	@Column(nullable = false, unique = true)
+	@NotNull
+	@Column
 	private String cnpj;
 
 	@Column

@@ -22,6 +22,7 @@ import com.autobots.automanager.enumeracoes.PerfilUsuario;
 import com.autobots.automanager.enumeracoes.TipoDocumento;
 import com.autobots.automanager.enumeracoes.TipoVeiculo;
 import com.autobots.automanager.repositorios.EmpresaRepositorio;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @SpringBootApplication
 public class AutomanagerApplication implements CommandLineRunner {
@@ -37,6 +38,13 @@ public class AutomanagerApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 
 		Empresa empresa = new Empresa();
+		empresa.setCnpj("12345678901234");
+
+		try {
+			repositorioEmpresa.save(empresa);
+		} catch (DataIntegrityViolationException e) {
+			System.err.println("Erro ao salvar a empresa: " + e.getMessage());
+			}
 		empresa.setRazaoSocial("Car service toyota ltda");
 		empresa.setNomeFantasia("Car service manutenção veicular");
 		empresa.setCadastro(new Date());
@@ -147,6 +155,7 @@ public class AutomanagerApplication implements CommandLineRunner {
 		rodaLigaLeve.setQuantidade(30);
 		rodaLigaLeve.setValor(300.0);
 		rodaLigaLeve.setDescricao("Roda de liga leve original de fábrica da toyta para modelos do tipo hatch");
+		rodaLigaLeve.setCodigo("RL-12345");
 
 		empresa.getMercadorias().add(rodaLigaLeve);
 
@@ -234,6 +243,7 @@ public class AutomanagerApplication implements CommandLineRunner {
 		rodaLigaLeve2.setQuantidade(30);
 		rodaLigaLeve2.setValor(300.0);
 		rodaLigaLeve2.setDescricao("Roda de liga leve original de fábrica da toyta para modelos do tipo hatch");
+		rodaLigaLeve2.setCodigo("RL-67890");
 
 		Servico alinhamento2 = new Servico();
 		alinhamento2.setDescricao("Alinhamento das rodas do carro");
