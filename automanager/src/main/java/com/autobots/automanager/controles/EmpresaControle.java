@@ -61,8 +61,9 @@ public class EmpresaControle {
     }
 
 
-    @PostMapping
-    public ResponseEntity<?> cadastrarEmpresa(@RequestBody Empresa empresa) {
+    @PostMapping("/cadastrar")
+    public ResponseEntity<Empresa> cadastrar(@RequestBody EmpresaDTO empresaDTO) {
+        Empresa empresa = modelMapper.map(empresaDTO, Empresa.class);
         if (empresa.getId() != null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -70,7 +71,7 @@ public class EmpresaControle {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("atualizar/{id}")
     public ResponseEntity<?> atualizarEmpresa(@PathVariable Long id, @RequestBody Empresa empresa) {
         return empresaRepositorio.findById(id)
                 .map(empresaExistente -> {
@@ -81,7 +82,7 @@ public class EmpresaControle {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("excluir/{id}")
     public ResponseEntity<?> excluirEmpresa(@PathVariable Long id) {
         if (!empresaRepositorio.existsById(id)) {
             return ResponseEntity.notFound().build();

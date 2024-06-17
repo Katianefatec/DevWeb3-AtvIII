@@ -16,6 +16,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(exclude = {"usuarios", "mercadorias", "servicos", "vendas"})
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "cnpj"))
 public class Empresa extends RepresentationModel<Empresa> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
