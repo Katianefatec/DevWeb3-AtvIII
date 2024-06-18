@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,10 +51,21 @@ public class MercadoriaControle {
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrarMercadoria(@RequestBody Mercadoria mercadoria) {
+    public ResponseEntity<?> cadastrarMercadoria(@RequestBody MercadoriaDTO mercadoriaDTO) {
+        Mercadoria mercadoria = modelMapper.map(mercadoriaDTO, Mercadoria.class);
+        if (mercadoria.getCadastro() == null) {
+            mercadoria.setCadastro(new Date());
+        }
+        if (mercadoria.getFabricao() == null) {
+            mercadoria.setFabricao(new Date());
+        }
+        if (mercadoria.getValidade() == null) {
+            return new ResponseEntity<>("The 'validade' field cannot be null", HttpStatus.BAD_REQUEST);
+        }
         repositorio.save(mercadoria);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
 
 
     @PutMapping("/atualizar")

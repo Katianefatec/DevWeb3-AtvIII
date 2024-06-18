@@ -3,6 +3,8 @@ package com.autobots.automanager.dtos;
 import lombok.Data;
 import org.springframework.hateoas.Link;
 
+import java.util.Date;
+
 @Data
 public class MercadoriaDTO {
     private Long id;
@@ -11,10 +13,11 @@ public class MercadoriaDTO {
     private String codigo;
     private double preco;
     private int quantidadeEstoque;
-
+    private Date cadastro;
+    private Date fabricao;
+    private Date validade;
 
     public void addLink(Link selfLink) {
 
     }
 }
-
