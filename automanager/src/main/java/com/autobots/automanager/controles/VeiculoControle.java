@@ -2,6 +2,7 @@ package com.autobots.automanager.controles;
 
 import com.autobots.automanager.dtos.VeiculoDTO;
 import com.autobots.automanager.dtos.VendaDTO;
+import com.autobots.automanager.entidades.Mercadoria;
 import com.autobots.automanager.entidades.Veiculo;
 import com.autobots.automanager.entidades.Venda;
 import com.autobots.automanager.modelos.AdicionadorLinkVeiculo;
@@ -53,7 +54,8 @@ public class VeiculoControle {
     }
 
     @PostMapping("/cadastro")
-    public ResponseEntity<?> cadastrarVeiculo(@RequestBody Veiculo veiculo) {
+    public ResponseEntity<?> cadastrarVeiculo(@RequestBody VeiculoDTO veiculoDTO) {
+        Veiculo veiculo = modelMapper.map(veiculoDTO, Veiculo.class);
         if (veiculo.getId() != null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
