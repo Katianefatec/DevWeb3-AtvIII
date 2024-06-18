@@ -5,10 +5,9 @@ import java.util.Date;
 
 @Data
 public class CredencialUsuarioSenhaDTO {
-    private Long id;
+    private Boolean inativo;
+    private String nomeUsuario;
+    private String senha;
     private Date criacao;
     private Date ultimoAcesso;
-    private boolean inativo;
-    private String nomeUsuario;
 }
-

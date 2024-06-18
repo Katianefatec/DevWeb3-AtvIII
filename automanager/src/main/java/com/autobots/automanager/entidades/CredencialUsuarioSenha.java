@@ -4,6 +4,8 @@ import javax.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Objects;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -16,4 +18,9 @@ public class CredencialUsuarioSenha extends Credencial {
 	@OneToOne
 	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId());
+	}
 }

@@ -1,10 +1,13 @@
 package com.autobots.automanager.controles;
 
+import com.autobots.automanager.dtos.CredencialUsuarioSenhaDTO;
 import com.autobots.automanager.dtos.UsuarioDTO;
 import com.autobots.automanager.dtos.VeiculoDTO;
+import com.autobots.automanager.entidades.CredencialUsuarioSenha;
 import com.autobots.automanager.entidades.Usuario;
 import com.autobots.automanager.modelos.AdicionadorLinkUsuario;
 import com.autobots.automanager.modelos.AdicionadorLinkVeiculo;
+import com.autobots.automanager.repositorios.CredencialRepositorio;
 import com.autobots.automanager.repositorios.UsuarioRepositorio;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -31,7 +35,8 @@ public class UsuarioControle {
     private UsuarioRepositorio repositorio;
     private ModelMapper modelMapper;
     private AdicionadorLinkUsuario adicionadorLink;
-    private UsuarioRepositorio UsuarioRepositorio;
+    private UsuarioRepositorio usuarioRepositorio;
+    private CredencialRepositorio credencialRepositorio;
 
     @GetMapping("/usuario/{id}")
     public ResponseEntity<EntityModel<UsuarioDTO>> obterUsuario(@PathVariable long id) {
@@ -73,10 +78,10 @@ public class UsuarioControle {
 
     @DeleteMapping("/excluir/{id}")
     public ResponseEntity<?> excluirUsuario(@PathVariable Long id) {
-        if (!UsuarioRepositorio.existsById(id)) {
+        if (!usuarioRepositorio.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        UsuarioRepositorio.deleteById(id);
+        usuarioRepositorio.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -99,4 +104,18 @@ public class UsuarioControle {
                 linkTo(methodOn(UsuarioControle.class).obterUsuarios()).withRel("usuarios")));
     }
 
+    @PostMapping("/adicionarCredencial/{idUsuario}")
+    public ResponseEntity<?> adicionarCredencial(@PathVariable Long idUsuario, @RequestBody CredencialUsuarioSenhaDTO credencialDTO) {
+        Usuario usuario = usuarioRepositorio.findById(idUsuario)
+                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado com id: " + idUsuario));
+
+        CredencialUsuarioSenha novaCredencial = modelMapper.map(credencialDTO, CredencialUsuarioSenha.class);
+        novaCredencial.setUsuario(usuario);
+        credencialRepositorio.save(novaCredencial);
+        usuario.getCredenciais().add(novaCredencial);
+        usuario.setCredencial(novaCredencial);
+        usuarioRepositorio.save(usuario);
+
+        return ResponseEntity.ok().body("Credencial adicionada com sucesso!");
+    }
 }

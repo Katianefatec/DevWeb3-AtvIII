@@ -1,5 +1,6 @@
 package com.autobots.automanager.entidades;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -43,4 +44,9 @@ public class Usuario {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "empresa_id")
 	private Empresa empresa;
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, nome, nomeSocial, perfis, telefones, endereco, documentos, emails, mercadorias, vendas, veiculos, empresa);
+	}
 }
