@@ -1,6 +1,9 @@
 package com.autobots.automanager.dtos;
 
 import lombok.Data;
+import org.springframework.hateoas.Link;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,5 +18,11 @@ public class VendaDTO {
     private double valorTotal;
     private List<Long> mercadoriaIds;
     private List<Long> servicoIds;
+
+    private List<Link> links = new ArrayList<>();
+
+    public void addLink(Link link) {
+        this.links.add(link);
+    }
 }
 

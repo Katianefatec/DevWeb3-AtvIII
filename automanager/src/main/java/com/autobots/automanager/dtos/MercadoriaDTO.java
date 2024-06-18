@@ -1,6 +1,7 @@
 package com.autobots.automanager.dtos;
 
 import lombok.Data;
+import org.springframework.hateoas.Link;
 
 @Data
 public class MercadoriaDTO {
@@ -10,5 +11,10 @@ public class MercadoriaDTO {
     private String codigo;
     private double preco;
     private int quantidadeEstoque;
+
+
+    public void addLink(Link selfLink) {
+
+    }
 }
 

@@ -1,7 +1,9 @@
 package com.autobots.automanager.modelos;
 
 import com.autobots.automanager.controles.EmpresaControle;
+import com.autobots.automanager.controles.MercadoriaControle;
 import com.autobots.automanager.dtos.EmpresaDTO;
+import com.autobots.automanager.dtos.MercadoriaDTO;
 import com.autobots.automanager.entidades.Empresa;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -47,7 +49,11 @@ public class AdicionadorLinkEmpresa implements AdicionadorLink<Empresa> {
                 .obterEmpresa(empresa.getContent().getId())).withSelfRel();
         empresa.add(selfLink);
     }
+
 }
+
+
+
 
 
 

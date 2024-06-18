@@ -48,6 +48,7 @@ public class Mercadoria {
 	@JsonBackReference
 	private Empresa empresa;
 
-	@ManyToMany(mappedBy = "mercadorias")
-	private Set<Venda> vendas = new HashSet<>();
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "venda_id")
+	private Venda venda;
 }
